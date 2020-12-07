@@ -8,7 +8,7 @@ int main()
     clock_t inicio, fin;
     double tiempoconsumido;
 
-    FILE * fid;
+    FILE *fid;
     fid = fopen("jugadores_amongETSE.txt", "r");
 
     tipo_jugador jugador;
@@ -22,21 +22,48 @@ int main()
     inicio = clock();
     /** aquí el código a medir **/
 
-for (int i = 1; i <= 10000; i++) {
-    fscanf(fid, "%s %s %s - %s - %s", jugador.nombre, jugador.apellido1, jugador.apellido2, jugador.clave, jugador.correo);
-    pasosAdicionales = InsertarHash(tabla, jugador);
-    sumaPasosAdicionales += pasosAdicionales;
-    colisiones += pasosAdicionales > 0 ? 1 : 0;
-    
-    // Contar operaciones y colisiones
-}
+    for (int i = 1; i <= 10000; i++)
+    {
+        fscanf(fid, "%s %s %s - %s - %s", jugador.nombre, jugador.apellido1, jugador.apellido2, jugador.clave, jugador.correo);
+        pasosAdicionales = InsertarHash(tabla, jugador);
+        sumaPasosAdicionales += pasosAdicionales;
+        colisiones += pasosAdicionales > 0 ? 1 : 0;
 
-printf("%d colisiones.\n", colisiones);
-printf("%d pasos adicionales.\n", sumaPasosAdicionales);
+        // Contar operaciones y colisiones
+    }
+
+    printf("%d colisiones.\n", colisiones);
+    printf("%d pasos adicionales.\n", sumaPasosAdicionales);
 
     fin = clock();
     tiempoconsumido = ((double)(fin - inicio)) / CLOCKS_PER_SEC;
-    printf("%lf", tiempoconsumido);
+    printf("tiempo: %lf.\n", tiempoconsumido);
+
+    fclose(fid);
+    fid = fopen("jugadores_amongETSE.txt", "r");
+    inicio = clock();
+    /** aquí el código a medir **/
+    sumaPasosAdicionales=0;
+    colisiones=0;
+
+    for (int i = 1; i <= 10000; i++)
+    {
+        fscanf(fid, "%s %s %s - %s - %s", jugador.nombre, jugador.apellido1, jugador.apellido2, jugador.clave, jugador.correo);
+        int enc = Busqueda(tabla, jugador.clave, &jugador, &pasosAdicionales);
+        sumaPasosAdicionales += pasosAdicionales;
+        colisiones += pasosAdicionales > 0 ? 1 : 0;
+        //printf("%s, enc: %d (%d)\n", jugador.clave, enc, pasosAdicionales);
+
+        // Contar operaciones y colisiones
+    }
+
+    printf("%d colisiones.\n", colisiones);
+    printf("%d pasos adicionales.\n", sumaPasosAdicionales);
+
+    fin = clock();
+    tiempoconsumido = ((double)(fin - inicio)) / CLOCKS_PER_SEC;
+    printf("tiempo: %lf.\n", tiempoconsumido);
 
     //DestruirTablaHash(&tabla);
+    fclose(fid);
 }

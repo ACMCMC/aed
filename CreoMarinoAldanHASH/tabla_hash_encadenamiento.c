@@ -120,7 +120,7 @@ int InsertarHash(TablaHash *t, tipoelem elemento)
 
    pos = Hash(elemento.clave);
 
-   colision = esvacia((*t)[pos]);
+   colision = !esvacia((*t)[pos]);
 
    inserta(&(*t)[pos], primero((*t)[pos]), elemento);
 

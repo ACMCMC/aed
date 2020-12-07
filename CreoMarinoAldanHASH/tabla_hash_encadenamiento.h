@@ -7,7 +7,7 @@
 #include <string.h>
 #include "lista.h"
 
-#define Tam 1000 /*DEFINIR NUMERO de entradas en la tabla.*/
+#define Tam 10000 /*DEFINIR NUMERO de entradas en la tabla.*/
 
 typedef lista TablaHash[Tam];
 

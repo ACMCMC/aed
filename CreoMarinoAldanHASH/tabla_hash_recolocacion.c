@@ -63,6 +63,7 @@ int _PosicionBuscar(TablaHash t, char *cad, int* pasosAdicionales)
     ini = Hash(cad);
     *pasosAdicionales=0;
 
+
     for (i = 0; i < Tam; i++)
     {
         aux = (ini + a * i) % Tam;
@@ -72,7 +73,7 @@ int _PosicionBuscar(TablaHash t, char *cad, int* pasosAdicionales)
         if (!strcmp(t[aux].clave, cad)){
             return aux;
         }
-        *(pasosAdicionales)++;
+        *(pasosAdicionales)+=1;
     }
     return ini;
 }
@@ -102,7 +103,7 @@ int _PosicionInsertar(TablaHash t, char *cad, int *pasosAdicionales)
         {
             return aux;
         }
-        (*pasosAdicionales)++;
+        (*pasosAdicionales)+=1;
     }
     return ini;
 }
@@ -165,6 +166,7 @@ int Busqueda(TablaHash t, char *clavebuscar, tipo_jugador *e, int* pasosAdiciona
 {
 
     int pos = _PosicionBuscar(t, clavebuscar, pasosAdicionales);
+
 
     if (t[pos].clave[0] == VACIO)
         return 0;

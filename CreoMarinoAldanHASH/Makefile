@@ -15,18 +15,20 @@ ARGS := -Wall -Wextra -pedantic -g -lm
 all: $(OUTPUTS)
 
 enc:
+	-make clean
 	-make all
 	gcc main.o lista.o tabla_hash_encadenamiento.o -o main -L $(HEADERS_DIR) $(ARGS)
 	./main
 
 rec:
+	-make clean
 	-make all
 	gcc main.o tabla_hash_recolocacion.o -o main -L $(HEADERS_DIR) $(ARGS)
 	./main
 
 
 $(OUTPUTS): $(OBJS)
-	gcc $(@:.out=.o) $(OBJS_HEADERS) -o $(@:.out=) -L $(HEADERS_DIR) $(ARGS)
+	gcc $(@:.out=.o) -o $(@:.out=) -L $(HEADERS_DIR) $(ARGS)
 
 %.o: %.c
 	gcc -o $@ -c $< $(ARGS)
