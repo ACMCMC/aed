@@ -51,23 +51,28 @@ int Hash(char *cad)
 /* RECOLOCACION LINEAL: depende del valor de la constante a*/
 
 /* Funci�n que localiza la posici�n del elemento cuando buscamos*/
-int _PosicionBuscar(TablaHash t, char *cad)
+int _PosicionBuscar(TablaHash t, char *cad, int* pasosAdicionales)
 {
     /* Devuelve el sitio donde est� la clave cad, o donde deber�a estar. */
     /* No tiene en cuenta los borrados para avanzar.                     */
 
     int ini, i, aux, a;
     /* Hay que dar valor a la variable de recolocaci�n a */
+    a = 1;
 
     ini = Hash(cad);
+    *pasosAdicionales=0;
 
     for (i = 0; i < Tam; i++)
     {
         aux = (ini + a * i) % Tam;
-        if (t[aux].clave[0] == VACIO)
+        if (t[aux].clave[0] == VACIO) {
             return aux;
-        if (!strcmp(t[aux].clave, cad))
+        }
+        if (!strcmp(t[aux].clave, cad)){
             return aux;
+        }
+        *(pasosAdicionales)++;
     }
     return ini;
 }
@@ -145,7 +150,8 @@ int MiembroHash(TablaHash t, char *cad)
 {
 
     int nCol, colision;
-    int pos = _PosicionBuscar(t, cad);
+    int pasosAdicionales; // No nos interesa su valor, pero como _PosicionBuscar la editamos para que devolviera ese valor, tenemos que pasarle algo
+    int pos = _PosicionBuscar(t, cad, &pasosAdicionales);
 
     if (t[pos].clave[0] == VACIO)
         return 0;
@@ -155,10 +161,10 @@ int MiembroHash(TablaHash t, char *cad)
 
 /* BUSCA UN ELEMENTO CON LA CLAVE INDICADA EN LA TABLA HASH, Y LO DEVUELVE, 
  * ADEMAS DE INDICAR CON 1 QUE EXISTE EL ELEMENTO, Y CON 0 QUE NO ESTA EN LA TABLA */
-int Busqueda(TablaHash t, char *clavebuscar, tipo_jugador *e)
+int Busqueda(TablaHash t, char *clavebuscar, tipo_jugador *e, int* pasosAdicionales)
 {
 
-    int pos = _PosicionBuscar(t, clavebuscar);
+    int pos = _PosicionBuscar(t, clavebuscar, pasosAdicionales);
 
     if (t[pos].clave[0] == VACIO)
         return 0;
@@ -176,6 +182,7 @@ int Busqueda(TablaHash t, char *clavebuscar, tipo_jugador *e)
 
 /* Funci�n que inserta un elemento en la tabla
  * Devuelve o si no hubo colisión; en caso contrario un número positivo que indica el número de pasos adicionales
+ * Devuelve el número de pasos adicionales
 */
 int InsertarHash(TablaHash t, tipo_jugador e)
 {
@@ -199,8 +206,9 @@ int InsertarHash(TablaHash t, tipo_jugador e)
 /* Funci�n que elimina un elemento de la tabla */
 void BorrarHash(TablaHash t, char *cad)
 {
+    int pasosAdicionales; // No nos interesa su valor, pero como _PosicionBuscar la editamos para que devolviera ese valor, tenemos que pasarle algo
 
-    int pos = _PosicionBuscar(t, cad);
+    int pos = _PosicionBuscar(t, cad, &pasosAdicionales);
 
     if (t[pos].clave[0] != VACIO && t[pos].clave[0] != BORRADO)
     {

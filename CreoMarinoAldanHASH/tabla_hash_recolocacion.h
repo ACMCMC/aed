@@ -25,6 +25,6 @@ typedef tipo_jugador TablaHash[Tam];
 void InicializarTablaHash(TablaHash t);
 int Hash(char *cad);
 int MiembroHash(TablaHash t, char *cad);
-int Busqueda(TablaHash t, char *cad, tipo_jugador *e);
+int Busqueda(TablaHash t, char *cad, tipo_jugador *e, int* pasosAdicionales);
 int InsertarHash(TablaHash t, tipo_jugador e);
 void BorrarHash(TablaHash t, char *cad);

@@ -61,7 +61,7 @@ int Hash(char *cad)
 
 /* BUSCA UN ELEMENTO CON LA CLAVE INDICADA EN LA TABLA HASH, Y LO DEVUELVE, 
  * ADEMAS DE INDICAR CON 1 QUE EXISTE EL ELEMENTO, Y CON 0 QUE NO ESTA EN LA TABLA */
-int Busqueda(TablaHash t, char *clavebuscar, tipoelem *e, int* colision, int* pasosAdicionales)
+int Busqueda(TablaHash t, char *clavebuscar, tipoelem *e, int* pasosAdicionales)
 {
    posicion p;
    int enc;
@@ -71,6 +71,8 @@ int Busqueda(TablaHash t, char *clavebuscar, tipoelem *e, int* colision, int* pa
    p = primero(t[pos]);
    enc = 0;
 
+   *pasosAdicionales=0;
+
    while (p != fin(t[pos]) && !enc)
    {
       recupera(t[pos], p, &ele);
@@ -79,8 +81,10 @@ int Busqueda(TablaHash t, char *clavebuscar, tipoelem *e, int* colision, int* pa
          enc = 1;
          *e = ele;
       }
-      else
+      else {
          p = siguiente(t[pos], p);
+         (*pasosAdicionales)++;
+      }
    }
 
    return enc;
