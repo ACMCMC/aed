@@ -22,8 +22,7 @@ void DestruirTablaHash(TablaHash t)
 
 /* FUNCION HASH 1 */
 
-/*
-int Hash(char *cad) {
+/*int Hash(char *cad) {
     int valor;
     unsigned char *c;
 
@@ -31,12 +30,10 @@ int Hash(char *cad) {
         valor += (int) *c;
 
     return (valor % Tam);
-}
-
-*/
+}*/
 
 /* FUNCION HASH 2 */
-int Hash(char *cad)
+/*int Hash(char *cad)
 {
    int i, suma = 0;
    for (i = strlen(cad) - 1; i >= 0; i--)
@@ -44,24 +41,24 @@ int Hash(char *cad)
       suma = (suma * 256 + cad[i]) % Tam;
    }
    return suma;
-}
+}*/
 
 /* FUNCION HASH 3: Probad al menos dos valores para la constante K */
 
-/*
-  int Hash (char *cad){
-     int i,suma=0;
-     int K=500;
-     for (i=strlen(cad)-1;i>=0;i--){
-         suma=(suma*K+cad[i])%Tam;
-     }
-     return suma;
- }
-*/
+int Hash(char *cad)
+{
+   int i, suma = 0;
+   int K = 256;
+   for (i = strlen(cad) - 1; i >= 0; i--)
+   {
+      suma = (suma * K + cad[i]) % Tam;
+   }
+   return suma;
+}
 
 /* BUSCA UN ELEMENTO CON LA CLAVE INDICADA EN LA TABLA HASH, Y LO DEVUELVE, 
  * ADEMAS DE INDICAR CON 1 QUE EXISTE EL ELEMENTO, Y CON 0 QUE NO ESTA EN LA TABLA */
-int Busqueda(TablaHash t, char *clavebuscar, tipoelem *e, int* pasosAdicionales)
+int Busqueda(TablaHash t, char *clavebuscar, tipoelem *e, int *pasosAdicionales)
 {
    posicion p;
    int enc;
@@ -71,7 +68,7 @@ int Busqueda(TablaHash t, char *clavebuscar, tipoelem *e, int* pasosAdicionales)
    p = primero(t[pos]);
    enc = 0;
 
-   *pasosAdicionales=0;
+   *pasosAdicionales = 0;
 
    while (p != fin(t[pos]) && !enc)
    {
@@ -81,7 +78,8 @@ int Busqueda(TablaHash t, char *clavebuscar, tipoelem *e, int* pasosAdicionales)
          enc = 1;
          *e = ele;
       }
-      else {
+      else
+      {
          p = siguiente(t[pos], p);
          (*pasosAdicionales)++;
       }
