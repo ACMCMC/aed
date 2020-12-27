@@ -3,6 +3,9 @@
 
 #define SIN_COGER -1
 
+/**
+ * Internamente, un vector de asignación de tareas se representa con un vector de enteros.
+ */
 typedef struct {
     int* valores;
     int totalNiveles;
@@ -10,7 +13,11 @@ typedef struct {
 
 typedef asig* asignacion;
 
-
+/////////////////////////////////////
+//                                 //
+//         INICIO FUNCIONES        //
+//                                 //
+/////////////////////////////////////
 
 int getNumPersonas(asignacion s) {
     return s->totalNiveles;
@@ -25,9 +32,10 @@ void Generar(int nivel, asignacion s, int** matrizBeneficios, int* bact) {
     }
 }
 
-int Criterio(int nivel, asignacion s) {
+int Criterio(int nivel, asignacion s, int* numPasosCriterio) {
     int i;
     for (i = 0; i < nivel; i++) {
+        (*numPasosCriterio)++;
         if (s->valores[nivel]==s->valores[i]) {
             return 0; // Hemos encontrado una tarea repetida
         }
@@ -35,8 +43,8 @@ int Criterio(int nivel, asignacion s) {
     return 1; // Ninguna tarea está repetida
 }
 
-int Solucion(int nivel, asignacion s) {
-    return (nivel==(getNumPersonas(s)-1) && Criterio(nivel, s));
+int Solucion(int nivel, asignacion s, int* numPasosSolucion) {
+    return (nivel==(getNumPersonas(s)-1) && Criterio(nivel, s, numPasosSolucion));
 }
 
 int MasHermanos(int nivel, asignacion s) {
