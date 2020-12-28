@@ -3,27 +3,26 @@
 
 #include "backtracking.h"
 
-//#define NUM_TAREAS 6
-#define NUM_TAREAS 3 //Descomentar para el problema con 3 tareas
+#define NUM_TAREAS 6
+//#define NUM_TAREAS 3 //Descomentar para el problema con 3 tareas
 
 asignacion backtracking(int** matrizBeneficios, int* numNodosGenerados);
 
 int main() {
     asignacion solucion;
-    /*int beneficiosP1[NUM_TAREAS] = {11, 17,  8, 16, 20, 14};
+    int beneficiosP1[NUM_TAREAS] = {11, 17,  8, 16, 20, 14};
     int beneficiosP2[NUM_TAREAS] = { 9,  7,  6, 12, 15, 18};
     int beneficiosP3[NUM_TAREAS] = {13, 15, 16, 12, 16, 18};
     int beneficiosP4[NUM_TAREAS] = {21, 24, 28, 17, 26, 20};
     int beneficiosP5[NUM_TAREAS] = {10, 14, 12, 11, 15, 13};
     int beneficiosP6[NUM_TAREAS] = {12, 20, 19, 13, 22, 17};
     int* matrizBeneficios[NUM_TAREAS] = {beneficiosP1, beneficiosP2, beneficiosP3, beneficiosP4, beneficiosP5, beneficiosP6};
-    */
     
     //Descomentar para el problema con 3 tareas
-    int beneficiosP1[NUM_TAREAS] = {4, 9, 1};
+    /*int beneficiosP1[NUM_TAREAS] = {4, 9, 1};
     int beneficiosP2[NUM_TAREAS] = {7, 2, 3};
     int beneficiosP3[NUM_TAREAS] = {6, 3, 5};
-    int* matrizBeneficios[NUM_TAREAS] = {beneficiosP1, beneficiosP2, beneficiosP3};
+    int* matrizBeneficios[NUM_TAREAS] = {beneficiosP1, beneficiosP2, beneficiosP3};*/
     
     int numNodosGenerados;
 
