@@ -7,10 +7,10 @@
 #define NUM_TAREAS 6
 //#define NUM_TAREAS 3 //Descomentar para el problema con 3 tareas
 
-asignacion branchAndBound(int** matrizBeneficios, int* numNodosGenerados, int* numPasosCriterio, int* numPasosSolucion);
+tipoelem branchAndBound(int** matrizBeneficios, int* numNodosGenerados, int* numPasosCriterio, int* numPasosSolucion);
 
 int main() {
-    asignacion solucion;
+    tipoelem solucion;
     int beneficiosP1[NUM_TAREAS] = {11, 17,  8, 16, 20, 14};
     int beneficiosP2[NUM_TAREAS] = { 9,  7,  6, 12, 15, 18};
     int beneficiosP3[NUM_TAREAS] = {13, 15, 16, 12, 16, 18};
@@ -40,46 +40,46 @@ int main() {
     destruirAsignacion(&solucion);
 }
 
-asignacion branchAndBound(int** matrizBeneficios, int* numNodosGenerados, int* numPasosCriterio, int* numPasosSolucion) {
+tipoelem branchAndBound(int** matrizBeneficios, int* numNodosGenerados, int* numPasosCriterio, int* numPasosSolucion) {
 
     // Inicializamos los contadores
     *numNodosGenerados = 0; // No tengo en cuenta el nodo raíz, ya que no es un nodo que genere la función Generar
     *numPasosCriterio = 0;
     *numPasosSolucion = 0;
 
-    int nivel = 0; // Empezamos en el nivel 0 (primera persona)
     tipoelem soa; // La solución óptima actual
-    tipoelem s; // La asignación que estamos comprobando
+    soa.bact = 0;
+    tipoelem nodoActual; // El nodo con el que estamos trabajando
+    tipoelem nodoHijo; // El nodo que es hijo del nodo con el que estamos trabajando
 
     lista l;
     crea(&l);
 
     tipoelem nodoRaiz;
-    generarNodoRaiz(NUM_TAREAS, &nodoRaiz);
-
+    generarNodoRaiz(NUM_TAREAS, &nodoRaiz, matrizBeneficios);
     inserta(&l, primero(l), nodoRaiz);
+    int C = nodoRaiz.CI;
 
-    int voa = 0; // El valor óptimo actual
-    int bact = 0; // El beneficio actual
-
-    do {
-        Generar(nivel, s, matrizBeneficios, &bact, usada); // Generamos una nueva asignación en el nivel actual
-        if (Solucion(nivel, s, usada, numPasosSolucion)) { // Si esta asignación es solución
-            (*numNodosGenerados)++; // Comentar esta línea para evitar contar también los nodos que cumplen el criterio, y son solución
-
-            if (bact>voa) { // Y si esta solución es mejor que la mejor que teníamos guardada...
-                voa = bact; // ...el valor óptimo actual es el del beneficio actual, y...
-                copiarAsignacion(&soa, s); // ...nos quedamos con s como solución óptima actual
-            }
+    while (!esvacia(l)) {
+        nodoActual = Seleccionar(&l);
+        if (nodoActual.CI > C) {
+            copiarNodo(&nodoHijo, nodoActual);
+            nodoHijo.nivel++;
+            do {
+                nodoHijo = siguienteHermano(nodoHijo);
+                if (Solucion(nodoHijo) && (nodoHijo.bact > soa.bact)) {
+                    copiarNodo(&soa, nodoHijo);
+                    C = (C > soa.bact) ? C : soa.bact;
+                } else if (!Solucion(nodoHijo) && (nodoHijo.CS > C)) {
+                    inserta(&l, fin(l), nodoHijo);
+                    C = (C > nodoHijo.bact) ? C : nodoHijo.bact;
+                } else {
+                    destruirNodo(&nodoHijo);
+                }
+            } while (masHermanos(nodoHijo));
         }
-        if (Criterio(nivel, s, usada, numPasosCriterio) && (nivel < (getNumPersonas(s)-1))) { // Si la asignación actual es viable...
-            nivel++; // ...bajamos un nivel en el árbol
-            (*numNodosGenerados)++;
-        }
-        while (!MasHermanos(nivel, s) && (nivel > -1)) { // Si no quedan más hermanos por probar en el nivel actual, subimos de nuevo
-            Retroceder(&nivel, s, matrizBeneficios, &bact, usada);
-        }
-    } while (nivel!=-1);
+        destruirNodo(&nodoActual);
+    }
 
-    return (soa); // Devolvemos la mejor solución que hayamos encontrado
+    return (nodoRaiz); // Devolvemos la mejor solución que hayamos encontrado
 }

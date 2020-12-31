@@ -4,7 +4,13 @@
 /**
  * Representa un vector de asignación de tareas; p.ej, (0,1,2,3,4). No le llamo solución, porque sólo es solución si es una asignación completa y válida.
  */
-typedef void* asignacion;
+typedef struct
+{
+    int *valores;
+    int totalNiveles;
+} asig;
+
+typedef asig *asignacion;
 
 typedef struct
 {
