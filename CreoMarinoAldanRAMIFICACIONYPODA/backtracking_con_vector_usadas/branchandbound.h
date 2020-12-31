@@ -1,10 +1,5 @@
-#ifndef BACKTRACKING_H
-#define BACKTRACKING_H
-
-/**
- * Representa un vector de asignación de tareas; p.ej, (0,1,2,3,4). No le llamo solución, porque sólo es solución si es una asignación completa y válida.
- */
-typedef void* asignacion;
+#ifndef BRANCHANDBOUND_H
+#define BRANCHANDBOUND_H
 
 /**
  * Genera el siguiente nodo al actual (su hermano derecho)
@@ -55,5 +50,7 @@ int getNumPersonas(asignacion s);
  * Imprime los valores de una asignación de tareas
  */
 void imprimirSolucion(asignacion s);
+
+void generarNodoRaiz(int totalNiveles, tipoelem* e);
 
 #endif

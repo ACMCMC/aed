@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "lista.h"
+
 #define SIN_COGER -1
 
 /**
@@ -23,6 +25,28 @@ int getNumPersonas(asignacion s) {
     return s->totalNiveles;
 }
 
+void calcularParametros(tipoelem* e, int** matrizBeneficios) {
+    calcularCI(e, matrizBeneficios);
+    calcularCS(e, matrizBeneficios);
+    calcularBE(e);
+}
+
+void calcularCI(tipoelem* e, int** matrizBeneficios) {
+    int ci = 0;
+    int i;
+    for (i = 0; i < e->nivel; i++) {
+        ci += matrizBeneficios[e->nivel][((asignacion)(e->tupla))->valores[i]];
+    }
+}
+
+void calcularCS(tipoelem* e, int** matrizBeneficios) {
+
+}
+
+void calcularBE(tipoelem* e) {
+    e->BE = (e->CS + e->CI) / 2.0;
+}
+
 void Generar(int nivel, asignacion s, int** matrizBeneficios, int* bact, int* usada) {
     if (s->valores[nivel]!=-1) {
         usada[s->valores[nivel]]--;
@@ -35,6 +59,7 @@ void Generar(int nivel, asignacion s, int** matrizBeneficios, int* bact, int* us
         *bact = *bact + matrizBeneficios[nivel][s->valores[nivel]] - matrizBeneficios[nivel][s->valores[nivel]-1];
     }
 }
+
 void imprimirSolucion(asignacion s);
 int Criterio(int nivel, asignacion s, int* usada, int* numPasosCriterio) {
     (*numPasosCriterio)++;
@@ -89,4 +114,20 @@ void imprimirSolucion(asignacion s) {
     for (i = 0; i < getNumPersonas(s); i++) {
         printf("Persona %d: tarea %d\n", i+1, s->valores[i]+1);
     }
+}
+
+void generarNodoRaiz(int totalNiveles, tipoelem* e) {
+    int i;
+
+    e->bact = 0;
+    e->nivel = 0;
+    asignacion a;
+    asignacionVacia(totalNiveles, &a);
+    e->tupla = a;
+    e->usadas = (int*) malloc(sizeof(int)*totalNiveles);
+    for (i = 0; i < totalNiveles; i++) {
+        e->usadas[i] = 0;
+    }
+
+    calcularParametros(e);
 }

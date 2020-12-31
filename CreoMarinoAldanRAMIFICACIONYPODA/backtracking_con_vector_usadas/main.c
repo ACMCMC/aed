@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "backtracking.h"
+#include "branchandbound.h"
+#include "lista.h"
 
 #define NUM_TAREAS 6
 //#define NUM_TAREAS 3 //Descomentar para el problema con 3 tareas
 
-asignacion backtracking(int** matrizBeneficios, int* numNodosGenerados, int* numPasosCriterio, int* numPasosSolucion);
+asignacion branchAndBound(int** matrizBeneficios, int* numNodosGenerados, int* numPasosCriterio, int* numPasosSolucion);
 
 int main() {
     asignacion solucion;
@@ -28,7 +29,7 @@ int main() {
     int numPasosCriterio;
     int numPasosSolucion;
 
-    solucion = backtracking(matrizBeneficios, &numNodosGenerados, &numPasosCriterio, &numPasosSolucion);
+    solucion = branchAndBound(matrizBeneficios, &numNodosGenerados, &numPasosCriterio, &numPasosSolucion);
 
     printf("\n===SOLUCIÓN===\n");
     imprimirSolucion(solucion);
@@ -39,7 +40,7 @@ int main() {
     destruirAsignacion(&solucion);
 }
 
-asignacion backtracking(int** matrizBeneficios, int* numNodosGenerados, int* numPasosCriterio, int* numPasosSolucion) {
+asignacion branchAndBound(int** matrizBeneficios, int* numNodosGenerados, int* numPasosCriterio, int* numPasosSolucion) {
 
     // Inicializamos los contadores
     *numNodosGenerados = 0; // No tengo en cuenta el nodo raíz, ya que no es un nodo que genere la función Generar
@@ -47,19 +48,19 @@ asignacion backtracking(int** matrizBeneficios, int* numNodosGenerados, int* num
     *numPasosSolucion = 0;
 
     int nivel = 0; // Empezamos en el nivel 0 (primera persona)
-    asignacion soa; // La solución óptima actual
-    asignacion s; // La asignación que estamos comprobando
-    asignacionVacia(NUM_TAREAS, &soa);
-    asignacionVacia(NUM_TAREAS, &s);
+    tipoelem soa; // La solución óptima actual
+    tipoelem s; // La asignación que estamos comprobando
+
+    lista l;
+    crea(&l);
+
+    tipoelem nodoRaiz;
+    generarNodoRaiz(NUM_TAREAS, &nodoRaiz);
+
+    inserta(&l, primero(l), nodoRaiz);
 
     int voa = 0; // El valor óptimo actual
     int bact = 0; // El beneficio actual
-
-    int usada[NUM_TAREAS];
-    int i;
-    for (i = 0; i < NUM_TAREAS; i++) {
-        usada[i] = 0;
-    }
 
     do {
         Generar(nivel, s, matrizBeneficios, &bact, usada); // Generamos una nueva asignación en el nivel actual
@@ -82,7 +83,3 @@ asignacion backtracking(int** matrizBeneficios, int* numNodosGenerados, int* num
 
     return (soa); // Devolvemos la mejor solución que hayamos encontrado
 }
-
-//Posibles mejoras -> vector de tareas usadas: (0, 0, 1), he usado la tarea 3
-
-//Contar pasos en funciones
