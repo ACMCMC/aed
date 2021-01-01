@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "lista.h"
 
 void crea(lista *l)
@@ -78,7 +79,6 @@ unsigned longitud(lista l)
 void inserta(lista *l, posicion p, tipoelem e)
 {
 	posicion q;
-
 	q = p->sig;
 
 	p->sig = (posicion)malloc(sizeof(struct celda));
@@ -92,11 +92,15 @@ void inserta(lista *l, posicion p, tipoelem e)
 void suprime(lista *l, posicion p)
 {
 	posicion q;
-
 	q = p->sig;
-	p->sig = q->sig;
 	if (p->sig == NULL)
+	{
 		(*l)->fin = p;
+	}
+	else
+	{
+		p->sig = q->sig;
+	}
 	free(q);
 	(*l)->longitud = (*l)->longitud - 1;
 }
