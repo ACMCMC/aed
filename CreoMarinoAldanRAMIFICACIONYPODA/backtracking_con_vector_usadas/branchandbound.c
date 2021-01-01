@@ -21,9 +21,9 @@ void calcularBact(tipoelem *e, int **matrizBeneficios)
 {
     int bact = 0;
     int i;
-    for (i = 0; i < e->nivel; i++)
+    for (i = 0; i <= e->nivel; i++)
     {
-        bact += matrizBeneficios[e->nivel][((asignacion)(e->tupla))->valores[i]];
+        bact += matrizBeneficios[i][((asignacion)(e->tupla))->valores[i]];
     }
     e->bact = bact;
 }
@@ -49,7 +49,7 @@ void calcularCS(tipoelem *e, int **matrizBeneficios)
 {
     int cs;
     cs = e->CI;
-    cs += maximoMatrizBeneficios(matrizBeneficios, getNumPersonas(e->tupla))*(getNumPersonas(e->tupla) - e->nivel);
+    cs += maximoMatrizBeneficios(matrizBeneficios, getNumPersonas(e->tupla))*((getNumPersonas(e->tupla) - 1) - e->nivel);
     e->CS = cs;
 }
 
