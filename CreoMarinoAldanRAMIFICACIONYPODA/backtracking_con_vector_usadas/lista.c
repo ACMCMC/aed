@@ -92,15 +92,11 @@ void inserta(lista *l, posicion p, tipoelem e)
 void suprime(lista *l, posicion p)
 {
 	posicion q;
+
 	q = p->sig;
+	p->sig = q->sig;
 	if (p->sig == NULL)
-	{
 		(*l)->fin = p;
-	}
-	else
-	{
-		p->sig = q->sig;
-	}
 	free(q);
 	(*l)->longitud = (*l)->longitud - 1;
 }

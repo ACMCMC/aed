@@ -4,31 +4,21 @@
 #include "lista.h"
 
 /**
- * Genera el siguiente nodo al actual (su hermano derecho)
- */
-//void Generar(int nivel, asignacion s, int** matrizBeneficios, int* bact, int* usada);
-
-/**
- * Indica si una asignación es solución
- */
-//int Solucion(int nivel, asignacion s, int* usada, int* numPasosSolucion);
-
-/**
- * Comprueba si una tarea está repetida comparándola con la del nivel especificado
- */
-//int Criterio(int nivel, asignacion s, int* usada, int* numPasosCriterio);
-
-/**
  * Indica si el nodo tiene más nodos hermanos en el nivel especificado
  */
 int MasHermanos(tipoelem n);
 
-tipoelem siguienteHermano(tipoelem n);
-
 /**
- * Realiza la función de retroceso de Backtracking
+ * Indica si un nodo es solución
  */
-//void Retroceder(int* nivel, asignacion s, int** matrizBeneficios, int* bact, int* usada);
+int Solucion(tipoelem n);
+
+void nodoVacio(tipoelem* n, int totalNiveles);
+
+void _imprimirNodo(tipoelem n);
+void _imprimirLista(lista LNV);
+
+int siguienteHermano(tipoelem* n, int** matrizBeneficios);
 
 /**
  * Selecciona el nodo más prometedor de la LNV
@@ -59,11 +49,6 @@ void copiarNodo(tipoelem* ndest, tipoelem norig);
  * Copia una asignación en otra
  */
 void destruirNodo(tipoelem* n);
-
-/**
- * Devuelve el tamaño del vector de asignaciones (que debería ser también el tamaño de la matriz de beneficios)
- */
-//int getNumPersonas(asignacion s);
 
 /**
  * Imprime los valores de una asignación de tareas

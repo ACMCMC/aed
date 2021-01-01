@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "lista.h"
 
@@ -16,15 +17,15 @@ int getNumPersonas(asignacion s)
     return s->totalNiveles;
 }
 
-
-void calcularCI(tipoelem *e, int **matrizBeneficios)
+void calcularBact(tipoelem *e, int **matrizBeneficios)
 {
-    int ci = 0;
+    int bact = 0;
     int i;
     for (i = 0; i < e->nivel; i++)
     {
-        ci += matrizBeneficios[e->nivel][((asignacion)(e->tupla))->valores[i]];
+        bact += matrizBeneficios[e->nivel][((asignacion)(e->tupla))->valores[i]];
     }
+    e->bact = bact;
 }
 
 int maximoMatrizBeneficios(int **matrizBeneficios, int numPersonas)
@@ -57,80 +58,84 @@ void calcularBE(tipoelem *e)
     e->BE = (e->CS + e->CI) / 2.0;
 }
 
+void calcularCI(tipoelem *e)
+{
+    e->CI = e->bact;
+}
+
 void calcularParametros(tipoelem *e, int **matrizBeneficios)
 {
-    calcularCI(e, matrizBeneficios);
+    calcularBact(e, matrizBeneficios);
+    calcularCI(e);
     calcularCS(e, matrizBeneficios);
     calcularBE(e);
 }
 
+void imprimirSolucion(tipoelem s)
+{
+    int i;
+    for (i = 0; i < getNumPersonas(s.tupla); i++)
+    {
+        printf("Persona %d: tarea %d\n", i + 1, ((asignacion) s.tupla)->valores[i] + 1);
+    }
+}
+
+void _imprimirNodo(tipoelem n) {
+        printf("\n" );
+    imprimirSolucion(n);
+    printf("CS: %f\n", n.CS);
+    printf("BE: %f\n", n.BE);
+    printf("CI: %f\n", n.CI);
+    printf("bact: %d\n", n.bact);
+    printf("nivel: %d\n", n.nivel);
+        printf("VECTOR: ( " );
+    for (int i = 0; i < getNumPersonas(n.tupla); i++) {
+        printf("%d, ", n.usadas[i]);
+    }
+        printf(")\n" );
+}
+
+void _imprimirLista(lista LNV) {
+    tipoelem e;
+    posicion p;
+    p = primero(LNV);
+    printf("\nLISTA__________\n");
+    while (p != fin(LNV)) {
+    recupera(LNV, p, &e);
+    _imprimirNodo(e);
+    p = siguiente(LNV, p);
+    }
+    printf("\nFIN------------\n");
+}
+
 tipoelem Seleccionar(lista* LNV) {
     tipoelem e;
-    int beMAX = 0;
+    float beMAX = 0.0;
+    
     posicion p = primero(*LNV);
-    while (p != NULL) { // Primero buscamos el máximo beneficio de toda la lista
+    while (p != fin(*LNV)) { // Primero buscamos el máximo beneficio de toda la lista
         recupera(*LNV, p, &e);
         if (e.BE > beMAX) {
             beMAX = e.BE;
         }
         p = siguiente(*LNV, p);
     }
-
-    p = fin(LNV); // Después buscamos el primero nodo desde el final que tiene el máximo beneficio (LIFO)
-    recupera(LNV, p, &e);
-    while (e.BE != beMAX);
+    p = fin(*LNV); // Después buscamos el primero nodo desde el final que tiene el máximo beneficio (LIFO)
+    do
     {
-        p = anterior(LNV, p);
-        recupera(LNV, p, &e);
-    }
+        p = anterior(*LNV, p);
+        recupera(*LNV, p, &e);
+    } while (fabs(e.BE - beMAX) > 0.1);
 
     suprime(LNV, p);
+
     return e;
 }
 
-/*void Generar(int nivel, asignacion s, int **matrizBeneficios, int *bact, int *usada)
+int Solucion(tipoelem n)
 {
-    if (s->valores[nivel] != -1)
-    {
-        usada[s->valores[nivel]]--;
-    }
-    s->valores[nivel] = s->valores[nivel] + 1;
-    usada[s->valores[nivel]]++;
-    if (s->valores[nivel] == 0)
-    { // Es la primera tarea que pruebo
-        *bact = *bact + matrizBeneficios[nivel][s->valores[nivel]];
-    }
-    else
-    { // Si no es la primera tarea, resto lo que asigné en la prueba anterior
-        *bact = *bact + matrizBeneficios[nivel][s->valores[nivel]] - matrizBeneficios[nivel][s->valores[nivel] - 1];
-    }
+    return (n.nivel == (getNumPersonas(n.tupla) - 1));
 }
-
-void imprimirSolucion(tipoelem s);
-
-int Criterio(int nivel, asignacion s, int *usada, int *numPasosCriterio)
-{
-    (*numPasosCriterio)++;
-    return usada[s->valores[nivel]] == 1; // Ninguna tarea está repetida
-}
-
-int Solucion(int nivel, asignacion s, int *usada, int *numPasosSolucion)
-{
-    return (nivel == (getNumPersonas(s) - 1) && Criterio(nivel, s, usada, numPasosSolucion));
-}
-
-int MasHermanos(int nivel, asignacion s)
-{
-    return (s->valores[nivel] < (getNumPersonas(s) - 1));
-}
-
-void Retroceder(int *nivel, asignacion s, int **matrizBeneficios, int *bact, int *usada)
-{
-    *bact = *bact - matrizBeneficios[*nivel][s->valores[*nivel]];
-    usada[s->valores[*nivel]]--;
-    s->valores[*nivel] = SIN_COGER;
-    (*nivel) = (*nivel) - 1;
-}*/
 
 void asignacionVacia(int totalNiveles, asignacion *s)
 {
@@ -153,25 +158,12 @@ void destruirAsignacion(asignacion *s)
 void copiarAsignacion(asignacion *sdest, asignacion sorig)
 {
     int i;
-    if ((*sdest) != NULL)
-    {
-        destruirAsignacion(sdest);
-    }
     *sdest = (asig *)malloc(sizeof(asig));
     (*sdest)->totalNiveles = sorig->totalNiveles;
     (*sdest)->valores = (int *)malloc(sizeof(int) * (sorig->totalNiveles));
     for (i = 0; i < sorig->totalNiveles; i++)
     {
         (*sdest)->valores[i] = sorig->valores[i];
-    }
-}
-
-void imprimirSolucion(tipoelem s)
-{
-    int i;
-    for (i = 0; i < getNumPersonas(s.tupla); i++)
-    {
-        printf("Persona %d: tarea %d\n", i + 1, ((asignacion) s.tupla)->valores[i] + 1);
     }
 }
 
@@ -183,7 +175,7 @@ void generarNodoRaiz(int totalNiveles, tipoelem *e, int** matrizBeneficios)
 {
     int i;
     e->bact = 0;
-    e->nivel = 0;
+    e->nivel = -1;
     asignacion a;
     asignacionVacia(totalNiveles, &a);
     e->tupla = a;
@@ -195,6 +187,13 @@ void generarNodoRaiz(int totalNiveles, tipoelem *e, int** matrizBeneficios)
     calcularParametros(e, matrizBeneficios);
 }
 
+void destruirNodo(tipoelem* n) {
+    destruirAsignacion(&(n->tupla));
+    n->tupla = NULL;
+    free(n->usadas);
+    n->usadas = NULL;
+}
+
 void copiarNodo(tipoelem* ndest, tipoelem norig) {
     int i;
     ndest->bact = norig.bact;
@@ -203,13 +202,41 @@ void copiarNodo(tipoelem* ndest, tipoelem norig) {
     ndest->BE= norig.BE;
     ndest->nivel = norig.nivel;
     copiarAsignacion(&(ndest->tupla), norig.tupla);
-    ndest->usadas = (int*) malloc(sizeof(int)*getNumPersonas(norig.tupla));
+    reservarMemoriaUsadas(ndest);
     for (i = 0; i < getNumPersonas(norig.tupla); i++) {
         ndest->usadas[i] = norig.usadas[i];
     }
 }
 
-void destruirNodo(tipoelem* n) {
-    destruirAsignacion(&(n->tupla));
-    free(n->usadas);
+void nodoVacio(tipoelem* n, int totalNiveles) {
+    int i;
+    asignacion a;
+    asignacionVacia(totalNiveles, &a);
+    n->tupla = a;
+    n->nivel = 0;
+    reservarMemoriaUsadas(n);
+    for (i = 0; i < totalNiveles; i++)
+    {
+        n->usadas[i] = 0;
+    }
+    n->bact = 0;
+    n->BE = 0;
+    n->CS = 0;
+    n->CI = 0;
+}
+
+int siguienteHermano(tipoelem* n, int** matrizBeneficios) {
+    int numSiguienteTarea;
+    if (n->usadas[n->tupla->valores[n->nivel]]==1) {
+        n->usadas[n->tupla->valores[n->nivel]]--;
+    }
+    for (numSiguienteTarea = n->tupla->valores[n->nivel] + 1; numSiguienteTarea < getNumPersonas(n->tupla); numSiguienteTarea++) {
+        if (n->usadas[numSiguienteTarea] == 0) {
+            n->usadas[numSiguienteTarea]++;
+            n->tupla->valores[n->nivel] = numSiguienteTarea;
+            calcularParametros(n, matrizBeneficios);
+            return 1;
+        }
+    }
+    return 0;
 }
