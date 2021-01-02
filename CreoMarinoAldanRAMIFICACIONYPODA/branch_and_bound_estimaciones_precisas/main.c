@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "branchandbound.h"
 #include "lista.h"
@@ -44,19 +45,20 @@ tipoelem branchAndBound(int **matrizBeneficios, int *numNodosGenerados)
     *numNodosGenerados = 0; // No tengo en cuenta el nodo raíz, ya que no es un nodo que genere la función Generar
 
     tipoelem soa; // La solución óptima actual
-    soa.bact = 0;
     tipoelem nodoActual; // El nodo con el que estamos trabajando
     tipoelem nodoHijo;   // El nodo que es hijo del nodo con el que estamos trabajando
     tipoelem nodoAux;    // Un nodo auxiliar
-    nodoVacio(&soa, NUM_TAREAS);
 
     lista LNV;
     crea(&LNV);
 
     tipoelem nodoRaiz;
     generarNodoRaiz(NUM_TAREAS, &nodoRaiz, matrizBeneficios);
+
+    soa = asignacionVoraz(nodoRaiz, matrizBeneficios); // Nuestra solución óptima en principio es la que nos devuelve una asignación voraz; el algoritmo tratará de buscar una mejor
+
     inserta(&LNV, primero(LNV), nodoRaiz);
-    int C = nodoRaiz.CI;
+    int C = soa.bact;
     while (!esvacia(LNV))
     {
         nodoActual = Seleccionar(&LNV);
@@ -77,10 +79,21 @@ tipoelem branchAndBound(int **matrizBeneficios, int *numNodosGenerados)
                 }
                 else if (!Solucion(nodoHijo) && (nodoHijo.CS > C))
                 {
+                printf("dasdsadas, %f, %f\n", nodoHijo.CI, nodoHijo.CS);
                     (*numNodosGenerados)++;
-                    copiarNodo(&nodoAux, nodoHijo);
-                    inserta(&LNV, fin(LNV), nodoAux);
-                    C = (C > nodoHijo.bact) ? C : nodoHijo.bact;
+                    if ((nodoHijo.CS - nodoHijo.CI) < 0.1) // No podemos usar == porque son floats, pueden darse errores de precisión
+                    {
+                        nodoAux = asignacionVoraz(nodoHijo, matrizBeneficios);
+                        destruirNodo(&soa);
+                        copiarNodo(&soa, nodoAux);
+                        C = (C > soa.bact) ? C : soa.bact;
+                    }
+                    else
+                    {
+                        copiarNodo(&nodoAux, nodoHijo);
+                        inserta(&LNV, fin(LNV), nodoAux);
+                        C = (C > nodoHijo.bact) ? C : nodoHijo.bact;
+                    }
                 }
             }
         }

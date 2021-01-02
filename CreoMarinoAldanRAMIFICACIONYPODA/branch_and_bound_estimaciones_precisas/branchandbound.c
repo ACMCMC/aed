@@ -20,6 +20,10 @@ int getNumPersonas(asignacion s)
     return s->totalNiveles;
 }
 
+tipoelem asignacionVoraz(tipoelem n, int** matrizBeneficios);
+tipoelem _maximosTareas(tipoelem n, int** matrizBeneficios);
+void destruirNodo(tipoelem *n);
+
 /**
  * Calcula bact
  */
@@ -59,10 +63,9 @@ int _maximoMatrizBeneficios(int **matrizBeneficios, int numPersonas)
  */
 void _calcularCS(tipoelem *e, int **matrizBeneficios)
 {
-    int cs;
-    cs = e->CI;
-    cs += _maximoMatrizBeneficios(matrizBeneficios, getNumPersonas(e->tupla)) * ((getNumPersonas(e->tupla) - 1) - e->nivel);
-    e->CS = cs;
+    tipoelem nodoMaxTareas = _maximosTareas(*e, matrizBeneficios);
+    e->CS = nodoMaxTareas.bact;
+    destruirNodo(&nodoMaxTareas);
 }
 
 /**
@@ -76,9 +79,11 @@ void _calcularBE(tipoelem *e)
 /**
  * Calcula CI
  */
-void _calcularCI(tipoelem *e)
+void _calcularCI(tipoelem *e, int** matrizBeneficios)
 {
-    e->CI = e->bact;
+    tipoelem nodoAsignacionVoraz = asignacionVoraz(*e, matrizBeneficios);
+    e->CI = nodoAsignacionVoraz.bact;
+    destruirNodo(&nodoAsignacionVoraz);
 }
 
 /**
@@ -87,7 +92,7 @@ void _calcularCI(tipoelem *e)
 void _calcularParametros(tipoelem *e, int **matrizBeneficios)
 {
     _calcularBact(e, matrizBeneficios);
-    _calcularCI(e);
+    _calcularCI(e, matrizBeneficios);
     _calcularCS(e, matrizBeneficios);
     _calcularBE(e);
 }
@@ -318,4 +323,62 @@ int siguienteHermano(tipoelem *n, int **matrizBeneficios)
         }
     }
     return 0;
+}
+
+/**
+ * Realiza una asignación voraz a partir de un nodo concreto
+ */
+tipoelem asignacionVoraz(tipoelem n, int** matrizBeneficios)
+{
+    tipoelem nuevoNodo;
+    int maxTareasLibresPersona, indiceMaxTareasLibresPersona;
+    int i, j;
+
+    copiarNodo(&nuevoNodo, n);
+
+    for ( i = nuevoNodo.nivel+1; i < getNumPersonas(nuevoNodo.tupla); i++) {
+        for ((maxTareasLibresPersona = 0, j = 0); j < getNumPersonas(nuevoNodo.tupla); j++) {
+            if (nuevoNodo.usadas[j]==0 && matrizBeneficios[i][j] > maxTareasLibresPersona) {
+                maxTareasLibresPersona = matrizBeneficios[i][j];
+                indiceMaxTareasLibresPersona = j;
+            }
+        }
+        nuevoNodo.usadas[indiceMaxTareasLibresPersona]++;
+        nuevoNodo.tupla->valores[i] = indiceMaxTareasLibresPersona;
+        nuevoNodo.nivel++;
+    }
+    _calcularBact(&nuevoNodo, matrizBeneficios);
+    nuevoNodo.CI = nuevoNodo.bact;
+    nuevoNodo.CS = nuevoNodo.bact;
+    nuevoNodo.BE = nuevoNodo.bact;
+    return nuevoNodo;
+}
+
+/**
+ * Realiza una asignación con el máximo beneficio (aunque se repitan tareas) para cada persona a partir de un nodo
+ */
+tipoelem _maximosTareas(tipoelem n, int** matrizBeneficios)
+{
+    tipoelem nuevoNodo;
+    int maxTareasLibresPersona, indiceMaxTareasLibresPersona;
+    int i, j;
+
+    copiarNodo(&nuevoNodo, n);
+
+    for ( i = nuevoNodo.nivel+1; i < getNumPersonas(nuevoNodo.tupla); i++) {
+        for ((maxTareasLibresPersona = 0, j = 0); j < getNumPersonas(nuevoNodo.tupla); j++) {
+            if (n.usadas[j]==0 && matrizBeneficios[i][j] > maxTareasLibresPersona) {
+                maxTareasLibresPersona = matrizBeneficios[i][j];
+                indiceMaxTareasLibresPersona = j;
+            }
+        }
+        nuevoNodo.usadas[indiceMaxTareasLibresPersona]++;
+        nuevoNodo.tupla->valores[i] = indiceMaxTareasLibresPersona;
+        nuevoNodo.nivel++;
+    }
+    _calcularBact(&nuevoNodo, matrizBeneficios);
+    nuevoNodo.CI = nuevoNodo.bact;
+    nuevoNodo.CS = nuevoNodo.bact;
+    nuevoNodo.BE = nuevoNodo.bact;
+    return nuevoNodo;
 }
