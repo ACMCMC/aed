@@ -4,24 +4,22 @@
 #include "lista.h"
 
 /**
- * Indica si el nodo tiene más nodos hermanos en el nivel especificado
- */
-int MasHermanos(tipoelem n);
-
-/**
  * Indica si un nodo es solución
  */
 int Solucion(tipoelem n);
 
+/**
+ * Genera un nodo con sus campos vacíos
+ */
 void nodoVacio(tipoelem* n, int totalNiveles);
 
-void _imprimirNodo(tipoelem n);
-void _imprimirLista(lista LNV);
-
+/**
+ * Función de iteración. Devuelve el siguiente hermano viable en el mismo nivel del nodo.
+ */
 int siguienteHermano(tipoelem* n, int** matrizBeneficios);
 
 /**
- * Selecciona el nodo más prometedor de la LNV
+ * Selecciona el nodo más prometedor de la LNV, con estrategia MB-LIFO
  */
 tipoelem Seleccionar(lista* LNV);
 
@@ -41,7 +39,7 @@ void destruirAsignacion(asignacion* s);
 void copiarAsignacion(asignacion*sdest, asignacion sorig);
 
 /**
- * Copia una asignación en otra
+ * Copia un nodo en otro
  */
 void copiarNodo(tipoelem* ndest, tipoelem norig);
 

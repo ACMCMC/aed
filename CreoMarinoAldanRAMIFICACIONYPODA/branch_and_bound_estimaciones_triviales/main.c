@@ -53,28 +53,25 @@ tipoelem branchAndBound(int **matrizBeneficios, int *numNodosGenerados, int *num
     soa.bact = 0;
     tipoelem nodoActual; // El nodo con el que estamos trabajando
     tipoelem nodoHijo;   // El nodo que es hijo del nodo con el que estamos trabajando
-    tipoelem nodoAux;   // Un nodo auxiliar
+    tipoelem nodoAux;    // Un nodo auxiliar
     nodoVacio(&soa, NUM_TAREAS);
 
-    lista l;
-    crea(&l);
+    lista LNV;
+    crea(&LNV);
 
     tipoelem nodoRaiz;
     generarNodoRaiz(NUM_TAREAS, &nodoRaiz, matrizBeneficios);
-    inserta(&l, primero(l), nodoRaiz);
+    inserta(&LNV, primero(LNV), nodoRaiz);
     int C = nodoRaiz.CI;
-    while (!esvacia(l))
+    while (!esvacia(LNV))
     {
-        nodoActual = Seleccionar(&l);
+        nodoActual = Seleccionar(&LNV);
         if (nodoActual.CS > C)
         {
             copiarNodo(&nodoHijo, nodoActual);
             nodoHijo.nivel++;
-            while (siguienteHermano(&nodoHijo, matrizBeneficios)) // Si no quedan más hermanos, la función siguienteHermano devuelve falso
+            while (siguienteHermano(&nodoHijo, matrizBeneficios)) // Si no quedan más hermanos, la función siguienteHermano devuelve falso, y se acaba el bucle
             {
-                if (Solucion(nodoHijo)) {
-                    _imprimirNodo(nodoHijo);
-                }
                 if (Solucion(nodoHijo) && (nodoHijo.bact > soa.bact))
                 {
                     destruirNodo(&soa);
@@ -84,7 +81,7 @@ tipoelem branchAndBound(int **matrizBeneficios, int *numNodosGenerados, int *num
                 else if (!Solucion(nodoHijo) && (nodoHijo.CS > C))
                 {
                     copiarNodo(&nodoAux, nodoHijo);
-                    inserta(&l, fin(l), nodoAux);
+                    inserta(&LNV, fin(LNV), nodoAux);
                     C = (C > nodoHijo.bact) ? C : nodoHijo.bact;
                 }
             }
