@@ -20,8 +20,8 @@ int getNumPersonas(asignacion s)
     return s->totalNiveles;
 }
 
-tipoelem asignacionVoraz(tipoelem n, int** matrizBeneficios);
-tipoelem _maximosTareas(tipoelem n, int** matrizBeneficios);
+tipoelem asignacionVoraz(tipoelem n, int **matrizBeneficios);
+tipoelem _maximosTareas(tipoelem n, int **matrizBeneficios);
 void destruirNodo(tipoelem *n);
 
 /**
@@ -79,7 +79,7 @@ void _calcularBE(tipoelem *e)
 /**
  * Calcula CI
  */
-void _calcularCI(tipoelem *e, int** matrizBeneficios)
+void _calcularCI(tipoelem *e, int **matrizBeneficios)
 {
     tipoelem nodoAsignacionVoraz = asignacionVoraz(*e, matrizBeneficios);
     e->CI = nodoAsignacionVoraz.bact;
@@ -328,7 +328,7 @@ int siguienteHermano(tipoelem *n, int **matrizBeneficios)
 /**
  * Realiza una asignación voraz a partir de un nodo concreto
  */
-tipoelem asignacionVoraz(tipoelem n, int** matrizBeneficios)
+tipoelem asignacionVoraz(tipoelem n, int **matrizBeneficios)
 {
     tipoelem nuevoNodo;
     int maxTareasLibresPersona, indiceMaxTareasLibresPersona;
@@ -336,9 +336,12 @@ tipoelem asignacionVoraz(tipoelem n, int** matrizBeneficios)
 
     copiarNodo(&nuevoNodo, n);
 
-    for ( i = nuevoNodo.nivel+1; i < getNumPersonas(nuevoNodo.tupla); i++) {
-        for ((maxTareasLibresPersona = 0, j = 0); j < getNumPersonas(nuevoNodo.tupla); j++) {
-            if (nuevoNodo.usadas[j]==0 && matrizBeneficios[i][j] > maxTareasLibresPersona) {
+    for (i = nuevoNodo.nivel + 1; i < getNumPersonas(nuevoNodo.tupla); i++)
+    {
+        for ((maxTareasLibresPersona = 0, j = 0); j < getNumPersonas(nuevoNodo.tupla); j++)
+        {
+            if (nuevoNodo.usadas[j] == 0 && matrizBeneficios[i][j] > maxTareasLibresPersona)
+            {
                 maxTareasLibresPersona = matrizBeneficios[i][j];
                 indiceMaxTareasLibresPersona = j;
             }
@@ -357,7 +360,7 @@ tipoelem asignacionVoraz(tipoelem n, int** matrizBeneficios)
 /**
  * Realiza una asignación con el máximo beneficio (aunque se repitan tareas) para cada persona a partir de un nodo
  */
-tipoelem _maximosTareas(tipoelem n, int** matrizBeneficios)
+tipoelem _maximosTareas(tipoelem n, int **matrizBeneficios)
 {
     tipoelem nuevoNodo;
     int maxTareasLibresPersona, indiceMaxTareasLibresPersona;
@@ -365,9 +368,12 @@ tipoelem _maximosTareas(tipoelem n, int** matrizBeneficios)
 
     copiarNodo(&nuevoNodo, n);
 
-    for ( i = nuevoNodo.nivel+1; i < getNumPersonas(nuevoNodo.tupla); i++) {
-        for ((maxTareasLibresPersona = 0, j = 0); j < getNumPersonas(nuevoNodo.tupla); j++) {
-            if (n.usadas[j]==0 && matrizBeneficios[i][j] > maxTareasLibresPersona) {
+    for (i = nuevoNodo.nivel + 1; i < getNumPersonas(nuevoNodo.tupla); i++)
+    {
+        for ((maxTareasLibresPersona = 0, j = 0); j < getNumPersonas(nuevoNodo.tupla); j++)
+        {
+            if (n.usadas[j] == 0 && matrizBeneficios[i][j] > maxTareasLibresPersona)
+            {
                 maxTareasLibresPersona = matrizBeneficios[i][j];
                 indiceMaxTareasLibresPersona = j;
             }

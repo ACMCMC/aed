@@ -17,7 +17,7 @@ typedef struct
     asignacion tupla;
     int nivel, bact;
     float CI, BE, CS;
-    int* usadas;
+    int *usadas;
 } tipoListaNodosVivos;
 
 typedef tipoListaNodosVivos tipoelem;

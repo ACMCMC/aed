@@ -44,7 +44,7 @@ tipoelem branchAndBound(int **matrizBeneficios, int *numNodosGenerados)
     // Inicializamos los contadores
     *numNodosGenerados = 0; // No tengo en cuenta el nodo raíz, ya que no es un nodo que genere la función Generar
 
-    tipoelem soa; // La solución óptima actual
+    tipoelem soa;        // La solución óptima actual
     tipoelem nodoActual; // El nodo con el que estamos trabajando
     tipoelem nodoHijo;   // El nodo que es hijo del nodo con el que estamos trabajando
     tipoelem nodoAux;    // Un nodo auxiliar
@@ -71,15 +71,16 @@ tipoelem branchAndBound(int **matrizBeneficios, int *numNodosGenerados)
                 if (Solucion(nodoHijo))
                 {
                     (*numNodosGenerados)++;
-                    if (nodoHijo.bact > soa.bact) {
-                    destruirNodo(&soa);
-                    copiarNodo(&soa, nodoHijo);
-                    C = (C > soa.bact) ? C : soa.bact;
+                    if (nodoHijo.bact > soa.bact)
+                    {
+                        destruirNodo(&soa);
+                        copiarNodo(&soa, nodoHijo);
+                        C = (C > soa.bact) ? C : soa.bact;
                     }
                 }
                 else if (!Solucion(nodoHijo) && (nodoHijo.CS > C))
                 {
-                printf("dasdsadas, %f, %f\n", nodoHijo.CI, nodoHijo.CS);
+                    printf("dasdsadas, %f, %f\n", nodoHijo.CI, nodoHijo.CS);
                     (*numNodosGenerados)++;
                     if ((nodoHijo.CS - nodoHijo.CI) < 0.1) // No podemos usar == porque son floats, pueden darse errores de precisión
                     {

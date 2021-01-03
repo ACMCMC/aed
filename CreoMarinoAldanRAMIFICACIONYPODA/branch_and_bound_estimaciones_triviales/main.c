@@ -69,10 +69,11 @@ tipoelem branchAndBound(int **matrizBeneficios, int *numNodosGenerados)
                 if (Solucion(nodoHijo))
                 {
                     (*numNodosGenerados)++;
-                    if (nodoHijo.bact > soa.bact) {
-                    destruirNodo(&soa);
-                    copiarNodo(&soa, nodoHijo);
-                    C = (C > soa.bact) ? C : soa.bact;
+                    if (nodoHijo.bact > soa.bact)
+                    {
+                        destruirNodo(&soa);
+                        copiarNodo(&soa, nodoHijo);
+                        C = (C > soa.bact) ? C : soa.bact;
                     }
                 }
                 else if (!Solucion(nodoHijo) && (nodoHijo.CS > C))
