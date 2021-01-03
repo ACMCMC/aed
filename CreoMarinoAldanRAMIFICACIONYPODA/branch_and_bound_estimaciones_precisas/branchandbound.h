@@ -58,8 +58,9 @@ void imprimirSolucion(tipoelem s);
  */
 void generarNodoRaiz(int totalNiveles, tipoelem *e, int **matrizBeneficios);
 
-void _imprimirNodo(tipoelem n);
+/**
+ * Realiza una asignación voraz de tareas a partir de un nodo
+ */
 tipoelem asignacionVoraz(tipoelem n, int **matrizBeneficios);
-tipoelem _maximosTareas(tipoelem n, int **matrizBeneficios);
 
 #endif
